@@ -80,10 +80,15 @@ export default function AddSpotPage() {
 
     try {
       let imageUrls = [];
-      if (files.length) {
-        toast('Caricamento foto in corso...', { icon: '📷' });
-        imageUrls = await uploadImages(files, user.uid, tmpId);
-      }
+if (files.length) {
+  try {
+    toast('Caricamento foto in corso...', { icon: '📷' });
+    imageUrls = await uploadImages(files, user.uid, tmpId);
+  } catch (uploadErr) {
+    console.warn('Upload foto fallito, pubblico senza immagini:', uploadErr);
+    toast('Foto non caricate, spot pubblicato senza immagini.', { icon: '⚠️' });
+  }
+}
 
       const tags = form.tags
         .split(',')
