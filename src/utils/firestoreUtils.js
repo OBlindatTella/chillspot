@@ -56,17 +56,19 @@ export async function getSpot(spotId) {
 /**
  * Recupera spot con filtri
  */
-export async function getSpots({ category, vibe, orderField = 'createdAt', limitN = 20 } = {}) {
-  let q = collection(db, 'spots');
-  const constraints = [where('status', '==', 'active')];
-
-  if (category) constraints.push(where('category', '==', category));
-  if (vibe) constraints.push(where('vibe', '==', vibe));
-  constraints.push(orderBy(orderField, 'desc'));
-  constraints.push(limit(limitN));
-
-  const snap = await getDocs(query(q, ...constraints));
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+export async function getSpots({ category, orderField = 'createdAt', limitN = 20 } = {}) {
+  // Query semplice senza indici compositi
+  const q = query(
+    collection(db, 'spots'),
+    orderBy(orderField, 'desc'),
+    limit(limitN)
+  );
+  const snap = await getDocs(q);
+  // Filtra lato client
+  return snap.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .filter(s => s.status === 'active')
+    .filter(s => !category || s.category === category);
 }
 
 /**
