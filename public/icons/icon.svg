@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#141b24"/>
+  <rect width="512" height="512" rx="96" fill="url(#grad)"/>
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1c2633"/>
+      <stop offset="100%" style="stop-color:#0d1117"/>
+    </linearGradient>
+  </defs>
+  <!-- Cerchio sfumato decorativo -->
+  <circle cx="256" cy="220" r="140" fill="none" stroke="#5c8a5c" stroke-width="3" opacity="0.3"/>
+  <circle cx="256" cy="220" r="100" fill="none" stroke="#5c8a5c" stroke-width="2" opacity="0.2"/>
+  <!-- Pin mappa stilizzato -->
+  <ellipse cx="256" cy="380" rx="60" ry="12" fill="#0d1117" opacity="0.4"/>
+  <path d="M256 100 C200 100 155 145 155 200 C155 270 256 360 256 360 C256 360 357 270 357 200 C357 145 312 100 256 100Z" fill="#5c8a5c"/>
+  <path d="M256 100 C200 100 155 145 155 200 C155 230 175 265 200 295 C225 250 256 360 256 360 C256 360 357 270 357 200 C357 145 312 100 256 100Z" fill="#7da67d" opacity="0.5"/>
+  <!-- Foglia interna -->
+  <circle cx="256" cy="200" r="45" fill="#141b24"/>
+  <text x="256" y="218" font-size="48" text-anchor="middle" font-family="serif">🌿</text>
+</svg>

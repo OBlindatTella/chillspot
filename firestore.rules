@@ -1,0 +1,98 @@
+// firestore.rules
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper functions ──────────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isValidString(s, maxLen) {
+      return s is string && s.size() > 0 && s.size() <= maxLen;
+    }
+
+    // ── Users ─────────────────────────────────────────────────────────
+    match /users/{userId} {
+      // Lettura: solo il proprietario
+      allow read: if isAuthenticated() && isOwner(userId);
+
+      // Creazione: solo il proprio profilo
+      allow create: if isAuthenticated() && isOwner(userId)
+        && request.resource.data.keys().hasAll(['uid', 'anonymousName', 'avatarStyle', 'createdAt'])
+        && isValidString(request.resource.data.anonymousName, 50);
+
+      // Aggiornamento: solo campi permessi
+      allow update: if isAuthenticated() && isOwner(userId)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['savedSpots', 'totalSpots', 'reputationScore']);
+    }
+
+    // ── Spots ─────────────────────────────────────────────────────────
+    match /spots/{spotId} {
+      // Lettura pubblica per spot attivi
+      allow read: if isAuthenticated();
+
+      // Creazione: utente autenticato con campi validi
+      allow create: if isAuthenticated()
+        && request.resource.data.createdBy == request.auth.uid
+        && isValidString(request.resource.data.title, 80)
+        && isValidString(request.resource.data.description, 500)
+        && request.resource.data.likesCount == 0
+        && request.resource.data.savedCount == 0
+        && request.resource.data.reportCount == 0
+        && request.resource.data.status == 'active';
+
+      // Aggiornamento: like, save, report, o proprietario
+      allow update: if isAuthenticated()
+        && (
+          // Like/unlike
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['likesCount', 'likedBy'])
+          ||
+          // Save count
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['savedCount'])
+          ||
+          // Report
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['reportCount', 'status'])
+          ||
+          // Proprietario che modifica il suo spot
+          (isOwner(resource.data.createdBy) &&
+            request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(['title', 'description', 'vibe', 'tags', 'bestTime', 'status']))
+        );
+
+      // Delete: solo il proprietario
+      allow delete: if isAuthenticated() && isOwner(resource.data.createdBy);
+    }
+
+    // ── Reports ───────────────────────────────────────────────────────
+    match /reports/{reportId} {
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && isValidString(request.resource.data.reason, 100);
+
+      // I report non sono leggibili dagli utenti normali
+      allow read: if false;
+    }
+
+    // ── Comments ──────────────────────────────────────────────────────
+    match /comments/{commentId} {
+      allow read: if isAuthenticated();
+
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && isValidString(request.resource.data.text, 300);
+
+      // Solo il proprietario può eliminare il suo commento
+      allow delete: if isAuthenticated() && isOwner(resource.data.userId);
+    }
+  }
+}

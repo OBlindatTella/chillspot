@@ -1,0 +1,171 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Variabili globali ─────────────────────────────────────────────────── */
+:root {
+  --font-display: 'Lora', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+
+/* ── Reset e base ──────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #0d1117;
+  color: #e6ede6;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar personalizzata ──────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #141b24;
+}
+::-webkit-scrollbar-thumb {
+  background: #2e3d50;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #476da0;
+}
+
+/* ── Tipografia ────────────────────────────────────────────────────────── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ── Leaflet overrides ─────────────────────────────────────────────────── */
+.leaflet-container {
+  background: #141b24 !important;
+  font-family: var(--font-body) !important;
+}
+.leaflet-tile {
+  filter: brightness(0.8) saturate(0.7) hue-rotate(180deg) invert(0.05);
+}
+.leaflet-popup-content-wrapper {
+  background: #1c2633 !important;
+  color: #e6ede6 !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+}
+.leaflet-popup-tip {
+  background: #1c2633 !important;
+}
+.leaflet-popup-close-button {
+  color: #8ca9c8 !important;
+}
+
+/* ── Componenti utility ────────────────────────────────────────────────── */
+@layer components {
+  .glass {
+    background: rgba(28, 38, 51, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .btn-primary {
+    @apply bg-sage-500 hover:bg-sage-400 text-white font-medium px-6 py-3 rounded-2xl
+           transition-all duration-200 active:scale-95 shadow-glow-sage;
+  }
+
+  .btn-secondary {
+    @apply text-sage-300 hover:text-white font-medium px-6 py-3 rounded-2xl
+           transition-all duration-200 active:scale-95;
+    background: rgba(28, 38, 51, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .btn-ghost {
+    @apply text-gray-400 hover:text-white font-medium px-4 py-2 rounded-xl
+           transition-all duration-200 active:scale-95;
+  }
+  .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .input-field {
+    @apply w-full bg-dark-700 rounded-2xl px-4 py-3
+           text-white placeholder-gray-500 focus:outline-none
+           transition-all duration-200;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .input-field:focus {
+    border-color: rgba(92, 138, 92, 0.5);
+    box-shadow: 0 0 0 2px rgba(92, 138, 92, 0.2);
+  }
+
+  .card {
+    @apply rounded-3xl overflow-hidden transition-all duration-300;
+    background: rgba(28, 38, 51, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+    border-color: rgba(255, 255, 255, 0.10);
+  }
+
+  .skeleton {
+    @apply rounded-xl animate-shimmer;
+    background: linear-gradient(90deg, #1c2633 25%, #243040 50%, #1c2633 75%);
+    background-size: 200% 100%;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+}
+
+/* ── Animazioni ────────────────────────────────────────────────────────── */
+@layer utilities {
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-500 { animation-delay: 500ms; }
+}
+
+/* ── Mappa pin personalizzati ──────────────────────────────────────────── */
+.chill-pin {
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  transition: transform 0.2s;
+}
+.chill-pin:hover {
+  transform: rotate(-45deg) scale(1.2);
+}
+.chill-pin-inner {
+  transform: rotate(45deg);
+  font-size: 14px;
+}

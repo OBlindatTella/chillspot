@@ -1,0 +1,30 @@
+// storage.rules
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── Immagini spot ─────────────────────────────────────────────────
+    match /spots/{userId}/{fileName} {
+      // Solo l'utente autenticato può leggere le proprie immagini
+      // Ma le immagini degli spot sono pubbliche una volta caricate
+      allow read: if request.auth != null;
+
+      // Solo l'utente autenticato può caricare nella sua cartella
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        // Max 10MB
+        && request.resource.size <= 10 * 1024 * 1024
+        // Solo immagini
+        && request.resource.contentType.matches('image/.*');
+
+      // Solo il proprietario può eliminare
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ── Blocca tutto il resto ─────────────────────────────────────────
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
